@@ -4,17 +4,16 @@ var startScreen = document.querySelector("#start-screen");
 var startButton = document.querySelector("#start");
 
 var timerElement = document.querySelector("#time");
-var startTime = 60;
-timerElement.innerText = startTime;
+var time = 60;
+timerElement.innerText = time;
 
-var questionNumber = 0;
+var questionWrapper = document.querySelector("#question-wrapper");
 
 function getQuestion(questionNumber) {
   var question = questions[questionNumber];
   var title = question.title;
   var choices = question.choices;
 
-  var questionWrapper = document.querySelector("#question-wrapper");
   questionWrapper.insertAdjacentHTML(
     "beforeend",
     `<div id="question" class="">
@@ -40,14 +39,36 @@ function getQuestion(questionNumber) {
   }
 }
 
+function checkAnswer(questionNumber) {
+  questionWrapper.addEventListener("click", function (event) {
+    var target = event.target;
+    if (target.innerText.includes(questions[questionNumber].answer)) {
+      console.log("correct");
+    } else {
+      if (time < 10) {
+        time = 1;
+      } else {
+        time += -10;
+      }
+    }
+  });
+}
+
+var questionNumber = 1;
+
 startButton.addEventListener("click", function () {
   startScreen.classList.add("hide");
 
-  setInterval(function () {
-    startTime--;
+  var timer = setInterval(function () {
+    time--;
 
-    timerElement.innerText = startTime;
+    timerElement.innerText = time;
+
+    if (time < 1) {
+      clearInterval(timer);
+    }
   }, 1000);
 
   getQuestion(questionNumber);
+  checkAnswer(questionNumber);
 });
